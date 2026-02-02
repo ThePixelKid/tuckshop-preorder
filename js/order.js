@@ -1,18 +1,30 @@
-// Removed Supabase import - using localStorage for orders
+// Removed Supabase import - using Google Apps Script API
+import { API_URL } from './config.js';
 import { cart } from "./menu.js";
 
-const ORDER_OPEN = 5;
-const ORDER_CLOSE = 9;
+const ORDER_OPEN = 17; // 5 PM
+const ORDER_CLOSE = 21; // 9 PM
 
 function isOrderingOpen() {
-  // Temporarily disabled for testing
-  return true;
+  const now = new Date();
+  const hour = now.getHours();
+  return hour >= ORDER_OPEN && hour < ORDER_CLOSE;
 }
 
 function updateUI() {
-  // Temporarily always open for testing
-  document.getElementById("orderBtn").disabled = false;
-  document.getElementById("statusMsg").innerText = "";
+  const open = isOrderingOpen();
+  const btn = document.getElementById("orderBtn");
+  const msg = document.getElementById("statusMsg");
+
+  if (open) {
+    btn.disabled = false;
+    msg.innerText = "Ordering is open (5-9 PM)";
+    msg.style.color = "#f59e0b";
+  } else {
+    btn.disabled = true;
+    msg.innerText = "Ordering is closed (available 5-9 PM daily)";
+    msg.style.color = "#ff6b6b";
+  }
 }
 
 updateUI();
@@ -35,30 +47,53 @@ document.getElementById("orderBtn").onclick = async (event) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // Check for existing order today (local check)
-  const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-  const todayOrders = existingOrders.filter(order => 
-    new Date(order.createdAt) >= today && order.studentName === name
-  );
-  if (todayOrders.length > 0) {
-    alert("You already ordered today");
+  // Check for existing order today (fetch from server)
+  try {
+    const response = await fetch(API_URL);
+    const allOrders = await response.json();
+    const todayOrders = allOrders.filter(order =>
+      new Date(order.createdAt) >= today && order.studentName === name
+    );
+    if (todayOrders.length > 0) {
+      alert("You already ordered today");
+      return;
+    }
+  } catch (error) {
+    console.error("Error checking existing orders:", error);
+    alert("Error checking orders. Please try again.");
     return;
   }
 
-  // Save order to localStorage
+  // Save order to server
+  const itemsText = Object.values(cart).map(item => `${item.name} ×${item.qty}`).join('; ');
   const newOrder = {
     studentName: name,
     form: document.getElementById("studentForm").value,
-    items: Object.values(cart),
+    itemsText: itemsText,
     status: "Pending",
     createdAt: new Date().toISOString()
   };
-  existingOrders.push(newOrder);
-  localStorage.setItem('orders', JSON.stringify(existingOrders));
 
-  console.log("Order saved locally");
-  // Clear cart after successful order
-  Object.keys(cart).forEach(key => delete cart[key]);
-  localStorage.removeItem('tuckshopCart');
-  window.location.href = "confirm.html";
+  try {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newOrder)
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save order');
+    }
+
+    console.log("Order saved successfully");
+    // Clear cart after successful order
+    Object.keys(cart).forEach(key => delete cart[key]);
+    localStorage.removeItem('tuckshopCart');
+    window.location.href = "confirm.html";
+  } catch (error) {
+    console.error("Error saving order:", error);
+    alert("Error saving order. Please try again.");
+  }
 };

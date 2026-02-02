@@ -1,4 +1,5 @@
-// Removed Supabase import - using localStorage for orders
+// Removed Supabase import - using Google Apps Script API
+import { API_URL } from './config.js';
 
 const pass = prompt("Admin password");
 if (pass !== "EdgeAdmin") {
@@ -11,18 +12,24 @@ const filter = document.getElementById("filter");
 
 async function loadOrders() {
   const formFilter = filter.value;
-  const allOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-  const filteredOrders = formFilter === 'All' ? allOrders : allOrders.filter(order => order.form === formFilter);
-  
-  // Group by date
-  const grouped = {};
-  filteredOrders.forEach(order => {
-    const date = new Date(order.createdAt).toDateString();
-    if (!grouped[date]) grouped[date] = [];
-    grouped[date].push(order);
-  });
-  
-  renderOrders(grouped);
+  try {
+    const response = await fetch(API_URL);
+    const allOrders = await response.json();
+    const filteredOrders = formFilter === 'All' ? allOrders : allOrders.filter(order => order.form === formFilter);
+    
+    // Group by date
+    const grouped = {};
+    filteredOrders.forEach(order => {
+      const date = new Date(order.createdAt).toDateString();
+      if (!grouped[date]) grouped[date] = [];
+      grouped[date].push(order);
+    });
+    
+    renderOrders(grouped);
+  } catch (error) {
+    console.error('Error loading orders:', error);
+    ordersDiv.innerHTML = "<p>Error loading orders</p>";
+  }
 }
 
 function renderOrders(grouped) {
@@ -41,13 +48,21 @@ function renderOrders(grouped) {
       div.className = "order-item";
       div.innerHTML = `
         <strong>#${i + 1} ${order.studentName} (${order.form})</strong><br>
-        ${order.items.map(it => `${it.name} ×${it.qty}`).join("<br>")}
+        ${order.itemsText || 'No items'}
       `;
       ordersDiv.appendChild(div);
 
-      order.items.forEach(it => {
-        totals[it.name] = (totals[it.name] || 0) + it.qty;
-      });
+      // Parse items for totals
+      if (order.itemsText) {
+        const items = order.itemsText.split('; ');
+        items.forEach(itemText => {
+          const match = itemText.match(/(.+) ×(\d+)/);
+          if (match) {
+            const [, name, qty] = match;
+            totals[name] = (totals[name] || 0) + parseInt(qty);
+          }
+        });
+      }
     });
   });
 
