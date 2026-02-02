@@ -9,35 +9,112 @@
   <div class="container">
     <header>
       <h1>Tuck Shop Preorder</h1>
+      <a href="admin.html" class="admin-link">Admin Dashboard</a>
       <p id="statusMsg"></p>
     </header>
 
-    <section class="menu-section">
-      <h2>Menu</h2>
-      <div id="menu"></div>
-    </section>
+    <section class="main-content">
+      <div class="menu-cart-container">
+        <section class="menu-section">
+          <h2>Menu</h2>
+          <div id="menu"></div>
+        </section>
 
-    <section class="cart-section">
-      <h2>Your Cart</h2>
-      <div id="cart"></div>
-    </section>
+        <div class="sidebar">
+          <section class="cart-section">
+            <h2>Your Cart</h2>
+            <div id="cart"></div>
+          </section>
 
-    <section class="form-section">
-      <h2>Your Details</h2>
-      <form id="orderForm">
-        <input id="studentName" type="text" placeholder="Your name" required>
-        <select id="studentForm" required>
-          <option value="">Select Form</option>
-          <option>Year 12</option>
-          <option>Year 13</option>
-        </select>
-        <select id="pickupTime" required>
-          <option value="">Pickup Time</option>
-          <option>Break</option>
-          <option>Lunch</option>
-        </select>
-        <button id="orderBtn" type="submit">Place Order</button>
-      </form>
+          <section class="form-section">
+            <h2>Your Details</h2>
+            <form id="orderForm">
+              <input id="studentName" list="studentNames" placeholder="Type or select your name" required>
+              <datalist id="studentNames">
+                <option value="Eyimofe Omagbemi">
+                <option value="Ellis Ekwenye">
+                <option value="Fortune Osalusi">
+                <option value="Fechi Ogwo">
+                <option value="Fehintoluwa Afolayan">
+                <option value="Gabrielle Patrick-Isicheli">
+                <option value="Julian Ekuerhare">
+                <option value="Folami Aderounmu">
+                <option value="Khalil Mohammed">
+                <option value="Nnaemeka Chukwuneta">
+                <option value="Oyindamola Fakuade">
+                <option value="Oluwatamilore Adeosun">
+                <option value="Oluwatomisin Ogunjana">
+                <option value="Richard Fayose">
+                <option value="Ayotunde Adenihun">
+                <option value="Abimifoluwa Aliu">
+                <option value="Christine Osian">
+                <option value="Daniel Dickson">
+                <option value="Binchukwu Ochonugor">
+                <option value="Kachi Obiagwu">
+                <option value="Jeremy Ezetendu">
+                <option value="Kasite Andy-Wabali">
+                <option value="Louis Folajimi">
+                <option value="Nichole Smatt-Oni">
+                <option value="Nathan Etim-Inyang">
+                <option value="Pelumi Adeoye">
+                <option value="Seun Odeniyi">
+                <option value="Toukpe Meggison">
+                <option value="Simone Amba">
+                <option value="Ogheneochuko Ufuoma">
+                <option value="Akinolude Oshikanlu">
+                <option value="Samuel Essiet">
+                <option value="Lawale Junior Wale-Falope">
+                <option value="iTofunmi Macaulay">
+                <option value="Isaiah Baje">
+                <option value="Darasimi Adekunle">
+                <option value="Alfareed Momoh">
+                <option value="Ebube Isiekwena">
+                <option value="Mobolaoluwabo Oyeyiola">
+                <option value="Chidiebube Ogboke">
+                <option value="Dipo Ogunjana">
+                <option value="Olutoni Idowu">
+                <option value="Toristeju Wilbert">
+                <option value="Urechi Ugorji">
+                <option value="Temisan Ghereje">
+                <option value="Oluwagbotemi Ogunnaike">
+                <option value="Oluwatitojumi Samuel-lpaye">
+                <option value="Michelle Ifegbuike">
+                <option value="Erhimeyoma Alex-Eyitene">
+                <option value="Jordan Bajlaiye">
+                <option value="Janis Nwobodo">
+                <option value="Biobele Longjohn">
+                <option value="Kiibaati Opasanya">
+                <option value="Beauty Amininim">
+                <option value="Abudulrahman Balogun">
+                <option value="Moji Vincent">
+                <option value="Luca Onyejianya">
+                <option value="Chika Nwazezeigwe">
+                <option value="Ifeakanna Akabogu">
+                <option value="Ayooluwa Ogunbiyi">
+                <option value="Chinenye Akpa">
+                <option value="Tanitoluwa Aboderin">
+                <option value="Ayomide Akinmoluwa">
+                <option value="Michelle Ogwezi">
+                <option value="Olayinka">
+                <option value="Tumlse">
+                <option value="Zara">
+                <option value="Winlfred Aladenusi">
+                <option value="Goodluck Nnaka">
+                <option value="Tishe Adebayo">
+                <option value="Dorcas Soril-Ekpo">
+                <option value="Dara Durodola">
+                <option value="Desmond Amokeodo">
+              </datalist>
+              <select id="studentForm" required>
+                <option value="">Select Form</option>
+                <option>AS</option>
+                <option>A2</option>
+              </select>
+              <button id="orderBtn" type="submit">Place Order</button>
+            </form>
+          </section>
+        </div>
+      </div>
     </section>
   </div>
 

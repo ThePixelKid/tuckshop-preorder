@@ -1,4 +1,4 @@
-import { supabase } from "./firebase.js";
+// Removed Supabase import - using localStorage for orders
 import { cart } from "./menu.js";
 
 const ORDER_OPEN = 5;
@@ -35,39 +35,30 @@ document.getElementById("orderBtn").onclick = async (event) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  try {
-    const { data, error } = await supabase
-      .from('orders')
-      .select('*')
-      .eq('studentName', name)
-      .gt('createdAt', today.toISOString());
-    if (error) {
-      console.warn("Could not check existing orders:", error);
-    } else if (data && data.length > 0) {
-      alert("You already ordered today");
-      return;
-    }
-
-    console.log("Adding order to Supabase");
-    const { error: insertError } = await supabase
-      .from('orders')
-      .insert({
-        studentName: name,
-        form: document.getElementById("studentForm").value,
-        pickupTime: document.getElementById("pickupTime").value,
-        items: Object.values(cart),
-        status: "Pending",
-        createdAt: new Date().toISOString()
-      });
-    if (insertError) {
-      console.error("Error adding order:", insertError);
-      alert("Error placing order: " + insertError.message);
-      return;
-    }
-    console.log("Order added successfully");
-    window.location.href = "confirm.html";
-  } catch (error) {
-    console.error("Error placing order:", error);
-    alert("Error placing order: " + error.message);
+  // Check for existing order today (local check)
+  const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+  const todayOrders = existingOrders.filter(order => 
+    new Date(order.createdAt) >= today && order.studentName === name
+  );
+  if (todayOrders.length > 0) {
+    alert("You already ordered today");
+    return;
   }
+
+  // Save order to localStorage
+  const newOrder = {
+    studentName: name,
+    form: document.getElementById("studentForm").value,
+    items: Object.values(cart),
+    status: "Pending",
+    createdAt: new Date().toISOString()
+  };
+  existingOrders.push(newOrder);
+  localStorage.setItem('orders', JSON.stringify(existingOrders));
+
+  console.log("Order saved locally");
+  // Clear cart after successful order
+  Object.keys(cart).forEach(key => delete cart[key]);
+  localStorage.removeItem('tuckshopCart');
+  window.location.href = "confirm.html";
 };
