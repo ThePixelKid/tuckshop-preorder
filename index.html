@@ -120,5 +120,25 @@
 
   <script type="module" src="js/menu.js"></script>
   <script type="module" src="js/order.js"></script>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    // Firebase configuration - Replace with your actual config
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkDlG4OPPko8vWFry_4GC_bU_SoIprnsc",
+      authDomain: "tuckshop-preorder-a50e7.firebaseapp.com",
+      projectId: "tuckshop-preorder-a50e7",
+      storageBucket: "tuckshop-preorder-a50e7.firebasestorage.app",
+      messagingSenderId: "548253433839",
+      appId: "1:548253433839:web:e8a92a0e73d911522ac01a"
+    };
+
+    // Initialize Firebase (will be used by firebase.js)
+    initializeApp(firebaseConfig);
+  </script>
+
+  <script type="module" src="js/firebase.js"></script>
 </body>
 </html>

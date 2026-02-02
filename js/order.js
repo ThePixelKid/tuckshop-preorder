@@ -1,5 +1,6 @@
-// Using IndexedDB for robust local storage with localStorage fallback
+// Using Firebase with IndexedDB/localStorage fallback for seamless cross-device sync
 import { cart } from "./menu.js";
+import { firebaseStorage } from "./firebase.js";
 
 const ORDER_OPEN = 5;
 const ORDER_CLOSE = 9;
@@ -17,7 +18,7 @@ const indexedDBSupported = (() => {
   }
 })();
 
-// Fallback storage using localStorage
+// Fallback storage using IndexedDB/localStorage
 class LocalStorageFallback {
   async saveOrder(order) {
     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
@@ -103,10 +104,94 @@ class IndexedDBStorage {
   }
 }
 
-// Choose storage method
-const storage = indexedDBSupported ? new IndexedDBStorage() : new LocalStorageFallback();
+// Unified storage with Firebase primary and local storage fallback
+class UnifiedStorage {
+  constructor() {
+    this.localStorage = indexedDBSupported ? new IndexedDBStorage() : new LocalStorageFallback();
+    this.firebaseAvailable = false;
 
-console.log(`Using ${indexedDBSupported ? 'IndexedDB' : 'localStorage'} for data storage`);
+    // Check Firebase availability
+    this.checkFirebaseAvailability();
+  }
+
+  async checkFirebaseAvailability() {
+    try {
+      await firebaseStorage.initialize();
+      this.firebaseAvailable = true;
+      console.log('Firebase storage available');
+    } catch (error) {
+      this.firebaseAvailable = false;
+      console.log('Firebase storage not available, using local storage only');
+    }
+  }
+
+  async saveOrder(order) {
+    try {
+      // Try Firebase first if available
+      if (this.firebaseAvailable) {
+        const firebaseId = await firebaseStorage.saveOrder(order);
+        // Also save locally as backup
+        await this.localStorage.saveOrder({ ...order, firebaseId });
+        return firebaseId;
+      } else {
+        // Fallback to local storage
+        return await this.localStorage.saveOrder(order);
+      }
+    } catch (error) {
+      console.error('Error saving to Firebase, falling back to local storage:', error);
+      // Fallback to local storage
+      return await this.localStorage.saveOrder(order);
+    }
+  }
+
+  async getAllOrders() {
+    try {
+      // Try Firebase first if available
+      if (this.firebaseAvailable) {
+        const firebaseOrders = await firebaseStorage.getAllOrders();
+        if (firebaseOrders.length > 0) {
+          return firebaseOrders;
+        }
+      }
+
+      // Fallback to local storage
+      return await this.localStorage.getAllOrders();
+    } catch (error) {
+      console.error('Error getting orders from Firebase, using local storage:', error);
+      return await this.localStorage.getAllOrders();
+    }
+  }
+
+  async checkExistingOrderToday(studentName) {
+    try {
+      // Check Firebase first if available
+      if (this.firebaseAvailable) {
+        const allOrders = await firebaseStorage.getAllOrders();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const todayOrders = allOrders.filter(order =>
+          new Date(order.createdAt) >= today && order.studentName === studentName
+        );
+
+        if (todayOrders.length > 0) {
+          return todayOrders;
+        }
+      }
+
+      // Fallback to local storage
+      return await this.localStorage.checkExistingOrderToday(studentName);
+    } catch (error) {
+      console.error('Error checking Firebase orders, using local storage:', error);
+      return await this.localStorage.checkExistingOrderToday(studentName);
+    }
+  }
+}
+
+// Choose storage method
+const storage = new UnifiedStorage();
+
+console.log(`Storage initialized: Firebase ${storage.firebaseAvailable ? 'available' : 'unavailable'}, local storage: ${indexedDBSupported ? 'IndexedDB' : 'localStorage'}`);
 
 function isOrderingOpen() {
   // Temporarily disabled for testing
