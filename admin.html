@@ -1,18 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-  <h1>Admin</h1>
-  <select id="filter">
-    <option>Break</option>
-    <option>Lunch</option>
-  </select>
+  <div class="container">
+    <header>
+      <h1>Admin Dashboard</h1>
+    </header>
 
-  <div id="orders"></div>
-  <h3>Totals</h3>
-  <div id="totals"></div>
+    <section class="filter-section">
+      <select id="filter">
+        <option>Break</option>
+        <option>Lunch</option>
+      </select>
+    </section>
+
+    <section class="orders-section">
+      <h2>Orders</h2>
+      <div id="orders"></div>
+    </section>
+
+    <section class="totals-section">
+      <h2>Totals</h2>
+      <div id="totals"></div>
+    </section>
+  </div>
 
   <script type="module" src="js/admin.js"></script>
 </body>

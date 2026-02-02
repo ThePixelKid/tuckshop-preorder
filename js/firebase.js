@@ -1,22 +1,6 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyDBmv2t6tB_LwdQLMXmtQQPjaKDjOE8w_U",
-  authDomain: "tuckshop-preorder.firebaseapp.com",
-  databaseURL: "https://tuckshop-preorder-default-rtdb.firebaseio.com",
-  projectId: "tuckshop-preorder",
-  storageBucket: "tuckshop-preorder.firebasestorage.app",
-  messagingSenderId: "781439361302",
-  appId: "1:781439361302:web:c4934745468ffb9718f037",
-  measurementId: "G-CZL8PFF61P"
-};
+const supabaseUrl = 'https://gbctcoaesqsacojrrwvi.supabase.co'
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdiY3Rjb2Flc3FzYWNvanJyd3ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk5ODE2NTQsImV4cCI6MjA4NTU1NzY1NH0.l1Pil84oPtKentDVFom6hh5_3KoP2s7aS71j2vU736M'
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+export const supabase = createClient(supabaseUrl, supabaseKey)
