@@ -1,4 +1,7 @@
-// Removed Supabase import - using Google Apps Script API
+// Ensure Firebase is initialized and connected
+import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+const db = getFirestore();
+
 import { API_URL } from './config.js';
 
 const pass = prompt("Admin password");
