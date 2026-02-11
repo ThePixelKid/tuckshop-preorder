@@ -2,13 +2,16 @@
 import { addOrder, getAllOrders } from './firebase.js';
 import { cart } from "./menu.js";
 
-const ORDER_OPEN = 17; // 5 PM
-const ORDER_CLOSE = 21; // 9 PM
+// TIME LIMIT DISABLED FOR TESTING
+const ORDER_OPEN = 0; // Always open for testing
+const ORDER_CLOSE = 24; // Always open for testing
 
 function isOrderingOpen() {
-  const now = new Date();
-  const hour = now.getHours();
-  return hour >= ORDER_OPEN && hour < ORDER_CLOSE;
+  // Temporarily disabled - always return true for testing
+  return true;
+  // const now = new Date();
+  // const hour = now.getHours();
+  // return hour >= ORDER_OPEN && hour < ORDER_CLOSE;
 }
 
 function updateUI() {
@@ -18,8 +21,8 @@ function updateUI() {
 
   if (open) {
     btn.disabled = false;
-    msg.innerText = "Ordering is open (5-9 PM)";
-    msg.style.color = "#22c55e";
+    msg.innerText = "Ordering System - TESTING MODE (No Time Limit)";
+    msg.style.color = "#10b981";
   } else {
     btn.disabled = true;
     msg.innerText = "Ordering is closed (available 5-9 PM daily)";
