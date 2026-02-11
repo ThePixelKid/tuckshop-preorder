@@ -1,5 +1,5 @@
-// Removed Supabase import - using Google Apps Script API
-import { API_URL } from './config.js';
+// Order submission and management
+import { addOrder, getAllOrders } from './firebase.js';
 import { cart } from "./menu.js";
 
 const ORDER_OPEN = 17; // 5 PM
@@ -19,18 +19,18 @@ function updateUI() {
   if (open) {
     btn.disabled = false;
     msg.innerText = "Ordering is open (5-9 PM)";
-    msg.style.color = "#f59e0b";
+    msg.style.color = "#22c55e";
   } else {
     btn.disabled = true;
     msg.innerText = "Ordering is closed (available 5-9 PM daily)";
-    msg.style.color = "#ff6b6b";
+    msg.style.color = "#ef4444";
   }
 }
 
 updateUI();
 
 document.getElementById("orderBtn").onclick = async (event) => {
-  event.preventDefault(); // Prevent form submission
+  event.preventDefault();
   console.log("Order button clicked");
   const name = document.getElementById("studentName").value.trim();
   if (!name || Object.keys(cart).length === 0) {
@@ -40,20 +40,21 @@ document.getElementById("orderBtn").onclick = async (event) => {
 
   // Temporarily disabled for testing
   // if (!isOrderingOpen()) {
-  //   alert("Ordering is closed (5–9 AM)");
+  //   alert("Ordering is closed (5–9 PM)");
   //   return;
   // }
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // Check for existing order today (fetch from server)
+  // Check for existing order today (fetch from Firebase)
   try {
-    const response = await fetch(API_URL);
-    const allOrders = await response.json();
-    const todayOrders = allOrders.filter(order =>
-      new Date(order.createdAt) >= today && order.studentName === name
-    );
+    const allOrders = await getAllOrders();
+    const todayOrders = allOrders.filter(order => {
+      const orderDate = order.createdAt?.toDate?.() || new Date(order.createdAt);
+      orderDate.setHours(0, 0, 0, 0);
+      return orderDate.getTime() === today.getTime() && order.studentName === name;
+    });
     if (todayOrders.length > 0) {
       alert("You already ordered today");
       return;
@@ -64,30 +65,18 @@ document.getElementById("orderBtn").onclick = async (event) => {
     return;
   }
 
-  // Save order to server
+  // Save order to Firebase
   const itemsText = Object.values(cart).map(item => `${item.name} ×${item.qty}`).join('; ');
   const newOrder = {
     studentName: name,
     form: document.getElementById("studentForm").value,
     itemsText: itemsText,
-    status: "Pending",
-    createdAt: new Date().toISOString()
+    status: "Pending"
   };
 
   try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newOrder)
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to save order');
-    }
-
-    console.log("Order saved successfully");
+    await addOrder(newOrder);
+    console.log("Order saved to Firebase successfully");
     // Clear cart after successful order
     Object.keys(cart).forEach(key => delete cart[key]);
     localStorage.removeItem('tuckshopCart');
