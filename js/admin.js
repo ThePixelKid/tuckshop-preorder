@@ -1,18 +1,39 @@
 // Admin Dashboard - Real-time Order Management
 import { getAllOrders, onOrdersChange, deleteOrder, ORDERS_COLLECTION } from './firebase.js';
+import { ADMIN_PW_HASH, ADMIN_PW_SALT } from './config.js';
 
 // ============================================
 // AUTHENTICATION
 // ============================================
 
-const ADMIN_PASSWORD = 'EdgeAdmin';
+async function sha256Hex(str) {
+  const enc = new TextEncoder();
+  const data = enc.encode(str);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
-function authenticateAdmin() {
+async function authenticateAdmin() {
+  // Allow single-session auth per browser tab
+  if (sessionStorage.getItem('tuckshopAdminAuth') === 'true') return;
+
   const pass = prompt('Enter Admin Password:');
-  if (pass !== ADMIN_PASSWORD) {
+  if (!pass) {
     alert('Invalid password. Redirecting...');
     window.location.href = 'index.html';
+    return;
   }
+
+  const candidateHash = await sha256Hex(pass + ADMIN_PW_SALT);
+  if (candidateHash !== ADMIN_PW_HASH) {
+    alert('Invalid password. Redirecting...');
+    window.location.href = 'index.html';
+    return;
+  }
+
+  // mark session as authenticated for this tab
+  sessionStorage.setItem('tuckshopAdminAuth', 'true');
 }
 
 // Authenticate on page load

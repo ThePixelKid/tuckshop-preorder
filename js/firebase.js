@@ -1,5 +1,5 @@
 // Firebase configuration and initialization
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { initializeApp, getApp, getApps } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import {
   getFirestore,
   collection,
@@ -24,8 +24,17 @@ const firebaseConfig = {
   appId: "1:548253433839:web:e8a92a0e73d911522ac01a"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase (safe: reuse existing app if already initialized)
+let app;
+if (getApps && getApps().length > 0) {
+  try {
+    app = getApp();
+  } catch (e) {
+    app = initializeApp(firebaseConfig);
+  }
+} else {
+  app = initializeApp(firebaseConfig);
+}
 const db = getFirestore(app);
 
 // Collection names
