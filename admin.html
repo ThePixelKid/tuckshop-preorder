@@ -7,15 +7,17 @@
 </head>
 <body>
   <div class="container">
-    <header>
-      <h1>Admin Dashboard</h1>
-      <div id="syncStatus" class="sync-status">
-        <span id="syncIndicator">🔄</span>
-        <span id="syncText">Connecting...</span>
+    <header class="card">
+      <div style="display:flex;align-items:center;gap:12px;width:100%;justify-content:space-between;">
+        <h1>Admin Dashboard</h1>
+        <div id="syncStatus" class="sync-status pill muted">
+          <span id="syncIndicator">🔄</span>
+          <span id="syncText">Connecting...</span>
+        </div>
       </div>
     </header>
 
-    <section class="filter-section">
+    <section class="filter-section card">
       <select id="filter">
         <option>All</option>
         <option>AS</option>
@@ -23,37 +25,31 @@
       </select>
     </section>
 
-    <!-- Data Management removed as requested -->
+    <section class="data-section card">
+      <h2>Data Management</h2>
+      <div class="data-controls">
+        <button id="exportBtn" class="data-btn btn btn--primary">📤 Export Orders</button>
+        <div class="import-controls">
+          <input type="file" id="importFile" accept=".json" style="display: none;">
+          <button id="importBtn" class="data-btn btn btn--primary" onclick="document.getElementById('importFile').click()">📥 Import Orders</button>
+          <span class="import-info">Select JSON file to import</span>
+        </div>
+      </div>
+      <p class="data-note muted">💡 Orders sync automatically across all computers in real-time</p>
+    </section>
 
-    <section class="orders-section">
+    <section class="orders-section card">
       <h2>Orders</h2>
       <div id="orders"></div>
     </section>
 
-    <section class="totals-section">
+    <section class="totals-section card">
       <h2>Totals</h2>
       <div id="totals"></div>
     </section>
   </div>
 
-  <!-- Firebase SDKs -->
-  <script type="module">
-    // Firebase configuration - Replace with your actual config
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAkDlG4OPPko8vWFry_4GC_bU_SoIprnsc",
-      authDomain: "tuckshop-preorder-a50e7.firebaseapp.com",
-      projectId: "tuckshop-preorder-a50e7",
-      storageBucket: "tuckshop-preorder-a50e7.firebasestorage.app",
-      messagingSenderId: "548253433839",
-      appId: "1:548253433839:web:e8a92a0e73d911522ac01a"
-    };
-
-    // Initialize Firebase (will be used by firebase.js)
-    initializeApp(firebaseConfig);
-  </script>
-
+  <!-- Firebase SDKs and initialization handled by `js/firebase.js` -->
   <script type="module" src="js/firebase.js"></script>
   <script type="module" src="js/admin.js"></script>
 </body>

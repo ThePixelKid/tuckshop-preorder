@@ -7,26 +7,28 @@
 </head>
 <body>
   <div class="container">
-    <header>
-      <h1>Tuck Shop Preorder</h1>
-      <a href="admin.html" class="admin-link">Admin Dashboard</a>
-      <p id="statusMsg"></p>
+    <header class="card">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <h1>Tuck Shop Preorder</h1>
+        <a href="admin.html" class="admin-link btn btn--ghost">Admin Dashboard</a>
+      </div>
+      <p id="statusMsg" class="muted"></p>
     </header>
 
     <section class="main-content">
       <div class="menu-cart-container">
-        <section class="menu-section">
+        <section class="menu-section card">
           <h2>Menu</h2>
           <div id="menu"></div>
         </section>
 
         <div class="sidebar">
-          <section class="cart-section">
+          <section class="cart-section card">
             <h2>Your Cart</h2>
             <div id="cart"></div>
           </section>
 
-          <section class="form-section">
+          <section class="form-section card">
             <h2>Your Details</h2>
             <form id="orderForm">
               <input id="studentName" list="studentNames" placeholder="Type or select your name" required>
@@ -110,7 +112,7 @@
                 <option>AS</option>
                 <option>A2</option>
               </select>
-              <button id="orderBtn" type="submit">Place Order</button>
+              <button id="orderBtn" class="btn btn--primary" type="submit">Place Order</button>
             </form>
           </section>
         </div>
@@ -121,24 +123,7 @@
   <script type="module" src="js/menu.js"></script>
   <script type="module" src="js/order.js"></script>
 
-  <!-- Firebase SDKs -->
-  <script type="module">
-    // Firebase configuration - Replace with your actual config
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAkDlG4OPPko8vWFry_4GC_bU_SoIprnsc",
-      authDomain: "tuckshop-preorder-a50e7.firebaseapp.com",
-      projectId: "tuckshop-preorder-a50e7",
-      storageBucket: "tuckshop-preorder-a50e7.firebasestorage.app",
-      messagingSenderId: "548253433839",
-      appId: "1:548253433839:web:e8a92a0e73d911522ac01a"
-    };
-
-    // Initialize Firebase (will be used by firebase.js)
-    initializeApp(firebaseConfig);
-  </script>
-
+  <!-- Firebase SDKs and initialization handled by `js/firebase.js` -->
   <script type="module" src="js/firebase.js"></script>
 </body>
 </html>
