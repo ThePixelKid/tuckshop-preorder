@@ -1,0 +1,114 @@
+/* Shopping-focused dark theme stylesheet (theme file)
+
+   Drop this file in place of your previous stylesheet or update your HTML
+   to reference `css/styles.theme.css`.
+*/
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto:wght@400;500&display=swap");
+
+:root {
+  --bg: #000000;
+  --card: #071628;
+  --text: #ffffff;
+  --muted: #9aa4b2;
+  --muted-2: #6b7682;
+  --border: rgba(255,255,255,0.06);
+  --accent-1: #0693e3;
+  --accent-2: #48f0b7;
+  --accent-grad: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+  --success: #00d084;
+  --danger: #ff4d5a;
+
+  --space-xxs: 6px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  --shadow-sm: 0 6px 18px rgba(0,0,0,0.6);
+  --shadow-md: 0 12px 40px rgba(0,0,0,0.7);
+
+  --font-sans: "Inter", "Roboto", system-ui, -apple-system, "Segoe UI", Arial;
+  --ease: cubic-bezier(.2,.9,.2,1);
+}
+
+*{ box-sizing:border-box; margin:0; padding:0 }
+html,body{height:100%}
+body{ font-family:var(--font-sans); background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; line-height:1.45; padding:var(--space-xl) var(--space-md) }
+.container{ max-width:1200px; margin:0 auto }
+
+:focus{ outline:3px solid rgba(6,147,227,0.18); outline-offset:2px }
+@media (prefers-reduced-motion:reduce){ *{ transition:none !important; animation:none !important } }
+
+.row{ display:flex; gap:var(--space-lg) }
+.col{ flex:1 }
+.muted{ color:var(--muted) }
+.small{ font-size:.9rem }
+.pill{ display:inline-block; padding:4px 10px; border-radius:999px; background:rgba(255,255,255,0.02); color:var(--muted); }
+
+.btn{ display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:10px; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--text); font-weight:600; transition: transform .14s var(--ease), box-shadow .14s var(--ease) }
+.btn:active{ transform:translateY(1px) }
+.btn--primary{ background:var(--accent-grad); color:#001022; border:none; box-shadow:0 10px 28px rgba(6,147,227,0.12) }
+.btn--primary:hover{ transform:translateY(-3px); box-shadow:var(--shadow-md) }
+.btn--ghost{ background:transparent; border:1px solid rgba(255,255,255,0.04) }
+.btn--small{ padding:6px 8px; font-size:.95rem }
+
+.header{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:var(--space-lg) }
+.site-title{ font-size:1.6rem; font-weight:700 }
+.header-actions{ display:flex; gap:12px; align-items:center }
+
+.main{ display:grid; grid-template-columns: 1fr 360px; gap:var(--space-lg) }
+@media (max-width:960px){ .main{ grid-template-columns:1fr } .header{ flex-direction:column; align-items:flex-start } }
+
+.products-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:var(--space-lg) }
+@media (max-width:1100px){ .products-grid{ grid-template-columns: repeat(2,1fr) } }
+@media (max-width:640px){ .products-grid{ grid-template-columns:1fr } }
+
+.card{ background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015)); border:1px solid var(--border); border-radius:var(--radius-md); overflow:hidden; display:flex; flex-direction:column }
+.card__media{ background:linear-gradient(180deg, rgba(0,0,0,0.08), rgba(255,255,255,0.01)); min-height:160px; display:flex; align-items:center; justify-content:center; overflow:hidden }
+.card__media img{ width:100%; height:100%; object-fit:cover; display:block }
+.card__body{ padding:var(--space-md); display:flex; flex-direction:column; gap:8px }
+.card__title{ font-weight:600; font-size:1.02rem; color:var(--text) }
+.card__desc{ color:var(--muted); font-size:.95rem }
+.card__meta{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:auto }
+.card__price{ font-weight:700; color:var(--text); font-size:1.05rem }
+.card__actions{ display:flex; gap:8px; align-items:center }
+
+.badge{ font-size:.8rem; padding:4px 8px; border-radius:8px; background:rgba(255,255,255,0.02); color:var(--muted); border:1px solid var(--border) }
+
+.sidebar .card{ padding:16px }
+.cart-list{ display:flex; flex-direction:column; gap:12px; max-height:560px; overflow:auto }
+.cart-item{ display:flex; gap:12px; align-items:center }
+.cart-item__thumb{ width:56px; height:56px; border-radius:8px; overflow:hidden; background:rgba(255,255,255,0.02) }
+.cart-item__thumb img{ width:100%; height:100%; object-fit:cover }
+.cart-item__meta{ flex:1 }
+.cart-item__name{ font-weight:600 }
+.cart-item__qty{ color:var(--muted); font-size:.95rem }
+.cart-footer{ display:flex; flex-direction:column; gap:10px; margin-top:12px }
+.cart-total{ display:flex; justify-content:space-between; font-weight:700; font-size:1.05rem }
+
+.cart-drawer{ position:fixed; right:0; top:0; height:100vh; width:360px; background:linear-gradient(180deg,var(--card), rgba(7,22,40,0.98)); transform:translateX(110%); transition:transform .28s var(--ease); box-shadow:-10px 0 40px rgba(0,0,0,0.6); z-index:60; padding:20px }
+.cart-drawer.is-open{ transform:translateX(0) }
+.cart-drawer .close{ position:absolute; left:12px; top:12px }
+
+.field{ display:flex; flex-direction:column; gap:6px }
+input[type="text"], input[type="email"], select, textarea{ background:transparent; border:1px solid var(--border); color:var(--text); padding:10px 12px; border-radius:10px }
+textarea{ min-height:100px }
+
+.modal{ position:fixed; left:50%; top:50%; transform:translate(-50%,-50%) scale(.98); background:var(--card); border-radius:12px; padding:20px; box-shadow:var(--shadow-md); width:min(760px,94%); opacity:0; pointer-events:none; transition:transform .22s var(--ease), opacity .22s var(--ease); z-index:80 }
+.modal.is-open{ transform:translate(-50%,-50%) scale(1); opacity:1; pointer-events:auto }
+
+@media (hover:none) and (pointer:coarse){ .btn:hover{ transform:none } }
+
+.footer{ margin-top:var(--space-xl); color:var(--muted); font-size:.95rem }
+.hide{ display:none !important }
+.show{ display:block }
+
+::-webkit-scrollbar{ width:10px; height:10px }
+::-webkit-scrollbar-track{ background:transparent }
+::-webkit-scrollbar-thumb{ background:linear-gradient(180deg,var(--accent-1),var(--accent-2)); border-radius:8px }
