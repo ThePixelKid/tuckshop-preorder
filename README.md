@@ -1,41 +1,55 @@
 # Tuck Shop Preorder System
 
-A modern web application for school tuck shop preordering with cross-device synchronization.
+A modern web application for school tuck shop preordering with real-time synchronization and a responsive dark theme.
 
 ## Features
 
 - **Student Ordering**: Easy-to-use interface with autocomplete name selection
 - **Real-time Cart**: Add/remove items with live quantity updates
-- **Time-based Ordering**: Automatically opens at 5 PM and closes at 9 PM
-- **Admin Dashboard**: Password-protected order management with date grouping
-- **Cross-device Sync**: Orders stored centrally and accessible from any device
+- **Admin Dashboard**: Password-protected order management with filtering
+- **Cross-device Sync**: Orders synced in real-time via Firebase
 - **Responsive Design**: Works on desktop, tablet, and mobile
+- **Dark Theme**: Modern dark UI with blue and green accents
+- **LocalStorage**: Cart persists between sessions
 
-## Setup for GitHub Pages
+## Setup for Firebase
 
-### 1. Google Sheets Setup
+### 1. Firebase Project Setup
 
-1. Create a new Google Sheet
-2. Go to **Extensions > Apps Script**
-3. Replace the default code with the content from `google-apps-script.js`
-4. Save the script
-5. Click **Deploy > New deployment**
-6. Select type **Web app**
-7. Set **Execute as**: Me
-8. Set **Who has access**: Anyone
-9. Click **Deploy**
-10. **Copy the web app URL** - you'll need this for the next step
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Create a new project
+3. Enable Firestore Database (Start in Test mode for development)
+4. Create two collections: `orders` and `menu`
+5. Copy your Firebase config from Project Settings
 
-### 2. Configuration
+### 2. Update Configuration
 
-1. Open `js/config.js`
-2. Replace `YOUR_SCRIPT_ID` with your Google Apps Script deployment URL
+1. Open `js/firebase.js`
+2. Replace the `firebaseConfig` object with your credentials:
 
 ```javascript
-const API_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
 ```
 
-### 3. Deploy to GitHub Pages
+### 3. Admin Password
+
+Update the hash in `js/config.js` if needed:
+
+```javascript
+export const ADMIN_PW_SALT = 'tuckshop_salt_v1';
+export const ADMIN_PW_HASH = '2256c0e57453ea111041438ac71c8d13211aea4a762db7c1e9b4a4ba1209f0a5';
+```
+
+Default password: `EdgeAdmin`
+
+### 4. Deploy to GitHub Pages
 
 1. Push this code to a GitHub repository
 2. Go to repository **Settings > Pages**
@@ -48,57 +62,92 @@ Your site will be available at `https://yourusername.github.io/repository-name/`
 ## Usage
 
 ### For Students
-- Visit the main page during ordering hours (5-9 PM)
+- Visit the main page
 - Select your name from the autocomplete field
 - Choose your form (AS/A2)
 - Browse menu items and adjust quantities
 - Submit your order
+- Cart data saves locally
 
 ### For Admins
 - Visit `admin.html`
 - Enter password: `EdgeAdmin`
-- View orders grouped by date
+- View all orders in real-time
 - Filter by form (All/AS/A2)
-- See total quantities needed
+- Export/import orders as JSON
+- See totals and per-student summaries
 
 ## Technical Details
 
-- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Backend**: Google Apps Script (serverless)
-- **Storage**: Google Sheets
-- **Styling**: Modern glassmorphism design with blue/gold theme
-- **Security**: Basic password protection for admin access
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+ modules)
+- **Backend**: Firebase Firestore (realtime)
+- **Storage**: Firestore (orders, menu) + LocalStorage (cart)
+- **Styling**: Modern dark theme with responsive grid layout
+- **Security**: Salted SHA-256 password hashing (frontend)
+- **Fonts**: Inter + Roboto (Google Fonts)
 
 ## File Structure
 
 ```
-├── index.html          # Student ordering page
-├── admin.html          # Admin dashboard
-├── confirm.html        # Order confirmation
+├── index.html              # Student ordering page
+├── admin.html              # Admin dashboard
+├── confirm.html            # Order confirmation page
+├── orders.json             # Sample order data
 ├── css/
-│   └── styles.css      # Main stylesheet
+│   ├── styles.css          # Main stylesheet (dark theme)
+│   └── styles.theme.css    # Backup theme file
 ├── js/
-│   ├── config.js       # API configuration
-│   ├── menu.js         # Menu and cart logic
-│   ├── order.js        # Order submission
-│   └── admin.js        # Admin dashboard logic
-├── google-apps-script.js # Server-side code
-└── README.md           # This file
+│   ├── config.js           # Configuration & constants
+│   ├── firebase.js         # Firebase setup & Firestore helpers
+│   ├── menu.js             # Menu rendering & cart logic
+│   ├── order.js            # Order submission
+│   ├── admin.js            # Admin authentication & dashboard
+│   └── cart-drawer.js      # Cart drawer UI interactions
+├── google-apps-script.js   # Legacy Apps Script (optional)
+├── server.js               # Local Node server (optional)
+├── serve.py                # Local Python server (optional)
+└── README.md               # This file
 ```
 
 ## Customization
 
-- **Menu Items**: Edit the hardcoded menu in `js/menu.js`
-- **Student Names**: Update the datalist in `index.html`
-- **Ordering Hours**: Modify `ORDER_OPEN` and `ORDER_CLOSE` in `js/order.js`
-- **Admin Password**: Change in `js/admin.js`
-- **Colors**: Update CSS variables in `css/styles.css`
+- **Menu Items**: Edit hardcoded menu array in `js/menu.js` (lines 19-50)
+- **Student Names**: Update datalist in `index.html` (lines 35-95)
+- **Admin Password**: Change in `js/config.js` and regenerate hash
+- **Colors**: Update CSS variables in `css/styles.css` (`:root` block)
+  - `--accent-1`: Primary blue (#0693e3)
+  - `--accent-2`: Accent green (#48f0b7)
+  - `--bg`: Background (#000000)
+  - `--card`: Card background (#071628)
+
+## Local Development
+
+### Using Node.js
+```bash
+npm install
+npm start
+# Open http://localhost:8000
+```
+
+### Using Python
+```bash
+python serve.py
+# Open http://localhost:8000
+```
 
 ## Troubleshooting
 
-- **Orders not saving**: Check that your Google Apps Script URL is correct in `config.js`
-- **CORS errors**: Ensure the Apps Script is deployed with "Anyone" access
-- **Time issues**: Check that your device's time zone is correct for ordering hours
+- **Orders not syncing**: Check Firebase Firestore rules allow read/write
+- **Admin login fails**: Verify password hash matches in `js/config.js`
+- **CORS errors**: Firebase should handle this automatically
+- **Cart not persisting**: Check browser allows localStorage
+- **Menu not loading**: Verify Firebase config is correct and Firestore has `menu` collection
+
+## Security Notes
+
+- ⚠️ **Frontend password hashing** is not production-secure. For production, implement backend authentication.
+- Firestore rules should be properly configured to prevent unauthorized access.
+- Do not expose sensitive config in client-side code (use Firebase security rules instead).
 
 ## License
 
