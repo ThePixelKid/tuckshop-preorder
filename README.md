@@ -62,18 +62,19 @@ Your site will be available at `https://yourusername.github.io/repository-name/`
 ## Usage
 
 ### For Students
-- Visit the main page
-- Select your name from the autocomplete field
-- Choose your form (AS/A2)
+- Go to [account.html](account.html) to **register** with your email, password, name, and form
+- **Login** with your credentials
 - Browse menu items and adjust quantities
-- Submit your order
-- Cart data saves locally
+- Submit your order (auto-filled with your name and form)
+- Cart data saves locally; orders sync to Firebase in real-time
+- **Logout** when done
 
 ### For Admins
-- Visit `admin.html`
+- Visit [admin.html](admin.html)
 - Enter password: `EdgeAdmin`
 - View all orders in real-time
 - Filter by form (All/AS/A2)
+- See price summary per order
 - Export/import orders as JSON
 - See totals and per-student summaries
 
@@ -89,18 +90,21 @@ Your site will be available at `https://yourusername.github.io/repository-name/`
 ## File Structure
 
 ```
-├── index.html              # Student ordering page
-├── admin.html              # Admin dashboard
+├── index.html              # Student ordering page (requires login)
+├── account.html            # Account registration/login page
+├── admin.html              # Admin dashboard (password protected)
 ├── confirm.html            # Order confirmation page
 ├── orders.json             # Sample order data
 ├── css/
-│   ├── styles.css          # Main stylesheet (dark theme)
+│   ├── styles.css          # Main stylesheet
 │   └── styles.theme.css    # Backup theme file
 ├── js/
 │   ├── config.js           # Configuration & constants
 │   ├── firebase.js         # Firebase setup & Firestore helpers
 │   ├── menu.js             # Menu rendering & cart logic
-│   ├── order.js            # Order submission
+│   ├── order.js            # Order submission (requires login)
+│   ├── account.js          # User registration & login
+│   ├── auth-utils.js       # Authentication utilities
 │   ├── admin.js            # Admin authentication & dashboard
 │   └── cart-drawer.js      # Cart drawer UI interactions
 ├── google-apps-script.js   # Legacy Apps Script (optional)
@@ -148,6 +152,40 @@ python serve.py
 - ⚠️ **Frontend password hashing** is not production-secure. For production, implement backend authentication.
 - Firestore rules should be properly configured to prevent unauthorized access.
 - Do not expose sensitive config in client-side code (use Firebase security rules instead).
+
+## Account System Details
+
+### User Data Structure (Firestore)
+```javascript
+{
+  email: "student@school.com",
+  passwordHash: "SHA256(email + password)",
+  name: "Student Name",
+  form: "AS",
+  createdAt: Timestamp,
+  accountBalance: 0,
+  isActive: true
+}
+```
+
+### Order Data Structure (Firestore)
+```javascript
+{
+  userId: "user_id_ref",
+  studentName: "Student Name",
+  email: "student@school.com",
+  form: "AS",
+  itemsText: "Item1 ×2; Item2 ×1",
+  status: "Pending",
+  createdAt: Timestamp
+}
+```
+
+### Session Storage
+- `tuckshopUserId`: Unique user ID from Firestore
+- `tuckshopUserEmail`: User's email address
+- `tuckshopUserName`: User's full name
+- `tuckshopUserForm`: User's form (AS/A2)
 
 ## License
 

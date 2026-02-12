@@ -1,6 +1,7 @@
 // Order submission and management
 import { addOrder, getAllOrders } from './firebase.js';
 import { cart } from "./menu.js";
+import { getCurrentUser, isLoggedIn } from './auth-utils.js';
 
 // TIME LIMIT DISABLED FOR TESTING
 const ORDER_OPEN = 0; // Always open for testing
@@ -35,9 +36,16 @@ updateUI();
 document.getElementById("orderBtn").onclick = async (event) => {
   event.preventDefault();
   console.log("Order button clicked");
-  const name = document.getElementById("studentName").value.trim();
-  if (!name || Object.keys(cart).length === 0) {
-    alert("Please enter your name and add items to cart");
+
+  // Check if logged in
+  if (!isLoggedIn()) {
+    alert("Please login to place an order");
+    window.location.href = 'account.html';
+    return;
+  }
+
+  if (Object.keys(cart).length === 0) {
+    alert("Please add items to cart");
     return;
   }
 
@@ -47,6 +55,7 @@ document.getElementById("orderBtn").onclick = async (event) => {
   //   return;
   // }
 
+  const user = getCurrentUser();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -56,7 +65,7 @@ document.getElementById("orderBtn").onclick = async (event) => {
     const todayOrders = allOrders.filter(order => {
       const orderDate = order.createdAt?.toDate?.() || new Date(order.createdAt);
       orderDate.setHours(0, 0, 0, 0);
-      return orderDate.getTime() === today.getTime() && order.studentName === name;
+      return orderDate.getTime() === today.getTime() && order.userId === user.userId;
     });
     if (todayOrders.length > 0) {
       alert("You already ordered today");
@@ -71,8 +80,10 @@ document.getElementById("orderBtn").onclick = async (event) => {
   // Save order to Firebase
   const itemsText = Object.values(cart).map(item => `${item.name} ×${item.qty}`).join('; ');
   const newOrder = {
-    studentName: name,
-    form: document.getElementById("studentForm").value,
+    userId: user.userId,
+    studentName: user.name,
+    email: user.email,
+    form: user.form,
     itemsText: itemsText,
     status: "Pending"
   };

@@ -11,8 +11,11 @@
       <div style="display:flex;align-items:center;gap:12px;">
         <h1>Tuck Shop Preorder</h1>
         <a href="admin.html" class="admin-link btn btn--ghost">Admin Dashboard</a>
-      </div>
-      <p id="statusMsg" class="muted"></p>
+      </div>      <div id="userInfo" style="display:flex;align-items:center;gap:12px;margin-top:12px;">
+        <span id="userDisplay" style="font-size:14px;color:#666;"></span>
+        <button id="logoutBtn" class="admin-link" style="cursor:pointer;">Logout</button>
+        <a href="account.html" id="loginLink" class="admin-link">Login / Register</a>
+      </div>      <p id="statusMsg" class="muted"></p>
     </header>
 
     <section class="main-content">
@@ -31,10 +34,9 @@
           <section class="form-section card">
             <h2>Your Details</h2>
             <form id="orderForm">
-              <input id="studentName" list="studentNames" placeholder="Type or select your name" required>
-              <datalist id="studentNames">
-                <option value="Eyimofe Omagbemi">
-                <option value="Ellis Ekwenye">
+              <input id="studentName" list="studentNames" placeholder="Your name (from account)" readonly required style="display:none;">
+              <input id="accountId" type="text" placeholder="Account ID (optional)" style="display:none;">
+              <select id="studentForm" required style="display:none;">
                 <option value="Fortune Osalusi">
                 <option value="Fechi Ogwo">
                 <option value="Fehintoluwa Afolayan">
@@ -127,5 +129,19 @@
 
   <!-- Firebase SDKs and initialization handled by `js/firebase.js` -->
   <script type="module" src="js/firebase.js"></script>
+
+  <script type="module">
+    import { getCurrentUser, isLoggedIn } from './js/auth-utils.js';
+    
+    // Check if logged in and redirect if not
+    if (!isLoggedIn()) {
+      window.location.href = 'account.html';
+    } else {
+      const user = getCurrentUser();
+      // Set student name from account
+      document.getElementById('studentName').value = user.name;
+      document.getElementById('studentForm').value = user.form;
+    }
+  </script>
 </body>
 </html>

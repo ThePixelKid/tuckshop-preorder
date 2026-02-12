@@ -28,14 +28,19 @@
     <section class="data-section card">
       <h2>Data Management</h2>
       <div class="data-controls">
-        <button id="exportBtn" class="data-btn btn btn--primary">📤 Export Orders</button>
+        <button id="exportBtn" class="data-btn">📤 Export Orders</button>
         <div class="import-controls">
           <input type="file" id="importFile" accept=".json" style="display: none;">
-          <button id="importBtn" class="data-btn btn btn--primary" onclick="document.getElementById('importFile').click()">📥 Import Orders</button>
+          <button id="importBtn" class="data-btn" onclick="document.getElementById('importFile').click()">📥 Import Orders</button>
           <span class="import-info">Select JSON file to import</span>
         </div>
       </div>
       <p class="data-note muted">💡 Orders sync automatically across all computers in real-time</p>
+    </section>
+
+    <section class="summary-section card">
+      <h2>Price Summary</h2>
+      <div id="priceSummary"></div>
     </section>
 
     <section class="orders-section card">

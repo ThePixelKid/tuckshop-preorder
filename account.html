@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Account - Tuck Shop Preorder</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Tuck Shop Preorder</h1>
+      <a href="index.html" class="admin-link">← Back to Menu</a>
+    </header>
+
+    <div class="auth-container">
+      <div class="auth-card">
+        <h2 id="authTitle">Create Account</h2>
+        <form id="authForm">
+          <input id="regEmail" type="email" placeholder="Email address" required>
+          <input id="regPassword" type="password" placeholder="Password (min 6 characters)" required>
+          <input id="regName" type="text" placeholder="Full name" required>
+          <input id="regForm" type="hidden" value="">
+          
+          <select id="regFormSelect" required>
+            <option value="">Select Form</option>
+            <option value="AS">AS</option>
+            <option value="A2">A2</option>
+          </select>
+
+          <button type="submit" id="authBtn" class="auth-submit">Create Account</button>
+        </form>
+
+        <div class="auth-toggle">
+          <p id="toggleText">Already have an account? <a href="#" id="toggleLink">Login</a></p>
+        </div>
+
+        <div id="authMessage" style="margin-top: 16px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/firebase.js"></script>
+  <script type="module" src="js/account.js"></script>
+</body>
+</html>

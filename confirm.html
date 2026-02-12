@@ -11,6 +11,9 @@
       <h1>🎉 Order Received!</h1>
       <p class="muted">Thank you! Collect your order at the chosen pickup time.</p>
     </header>
+    <div id="userInfo" style="text-align: center; margin-top: 20px;">
+      <p id="confirmMsg"></p>
+    </div>
     <div style="text-align: center; margin-top: 40px;">
       <a href="index.html" class="back-link btn">← Back to Menu</a>
     </div>
@@ -20,5 +23,13 @@
     <!-- Firebase SDKs and initialization handled by `js/firebase.js` -->
     <script type="module" src="js/firebase.js"></script>
     <script src="js/cart-drawer.js" defer></script>
+    <script type="module">
+      import { getCurrentUser } from './js/auth-utils.js';
+      const user = getCurrentUser();
+      const msg = document.getElementById('confirmMsg');
+      if (user) {
+        msg.innerHTML = `<strong>${user.name}</strong> (${user.form})<br><span style="color: #999;">Your order has been recorded</span>`;
+      }
+    </script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 // Admin Dashboard - Real-time Order Management
 import { getAllOrders, onOrdersChange, deleteOrder, ORDERS_COLLECTION } from './firebase.js';
 import { ADMIN_PW_HASH, ADMIN_PW_SALT } from './config.js';
+import { MENU_DATA } from './menu.js';
 
 // ============================================
 // AUTHENTICATION
@@ -46,6 +47,7 @@ authenticateAdmin();
 const filterSelect = document.getElementById('filter');
 const ordersDiv = document.getElementById('orders');
 const totalsDiv = document.getElementById('totals');
+const priceSummaryDiv = document.getElementById('priceSummary');
 const syncIndicator = document.getElementById('syncIndicator');
 const syncText = document.getElementById('syncText');
 const exportBtn = document.getElementById('exportBtn');
@@ -178,6 +180,7 @@ function renderOrders(orders) {
     });
 
   renderTotals(totals);
+  renderPriceSummary(filteredOrders);
 }
 
 /**
@@ -195,6 +198,79 @@ function renderTotals(totals) {
     .join('');
 
   totalsDiv.innerHTML = totalsHtml;
+}
+
+/**
+ * Render price summary for all orders
+ */
+function renderPriceSummary(orders) {
+  const filteredOrders = applyFilter(orders);
+  
+  if (filteredOrders.length === 0) {
+    priceSummaryDiv.innerHTML = '<p style="color: #666;">No orders to calculate</p>';
+    return;
+  }
+
+  // Create price map
+  const priceMap = {};
+  MENU_DATA.forEach(item => {
+    priceMap[item.name] = item.price;
+  });
+
+  // Calculate per-order totals and overall revenue
+  const orderSummaries = [];
+  let totalRevenue = 0;
+
+  filteredOrders.forEach((order, idx) => {
+    let orderTotal = 0;
+    const itemsText = order.itemsText || 'No items';
+    
+    if (itemsText && itemsText !== 'No items') {
+      const items = itemsText.split(';').map(item => item.trim());
+      items.forEach(itemText => {
+        const match = itemText.match(/(.+?)\s*×\s*(\d+)/);
+        if (match) {
+          const [, name, qty] = match;
+          const itemName = name.trim();
+          const itemPrice = priceMap[itemName] || 0;
+          orderTotal += itemPrice * parseInt(qty);
+        }
+      });
+    }
+
+    totalRevenue += orderTotal;
+    const studentName = order.studentName || 'Unknown';
+    orderSummaries.push({
+      student: studentName,
+      form: order.form || 'N/A',
+      total: orderTotal,
+      idx: idx + 1
+    });
+  });
+
+  // Sort by price descending
+  orderSummaries.sort((a, b) => b.total - a.total);
+
+  // Render summary
+  const summaryHtml = `
+    <div class="price-header">
+      <strong>Total Revenue: ₦${totalRevenue.toLocaleString()}</strong>
+      <span style="color: #999;">${filteredOrders.length} orders</span>
+    </div>
+    <div class="price-list">
+      ${orderSummaries.map(s => `
+        <div class="price-item">
+          <div class="price-info">
+            <span><strong>#${s.idx} ${s.student}</strong></span>
+            <span style="color: #999; font-size: 13px;">${s.form}</span>
+          </div>
+          <span class="price-amount">₦${s.total.toLocaleString()}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  priceSummaryDiv.innerHTML = summaryHtml;
 }
 
 /**
